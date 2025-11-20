@@ -5,58 +5,84 @@
  */
 
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { FlatList, SafeAreaView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { useTheme } from './theme/ThemeContext';
+import { ColorPalette } from './theme/colors';
 
+// Define the structure for a project item
+type Project = {
+  id: string;
+  title: string;
+  description: string;
+};
+
+// Sample data for the projects list
+const projectData: Project[] = [
+  {
+    id: '1',
+    title: 'Portfolio App',
+    description: 'A React Native application to showcase my work and skills.',
+  },
+  {
+    id: '2',
+    title: 'Game Prototype',
+    description: 'A 2D platformer game developed using Unreal Engine.',
+  },
+];
 
 export default function ProjectsScreen() {
+  const { colors } = useTheme();
+  const styles = getStyles(colors);
   // Render function for each item
   const renderProject = ({ item }: { item: Project }) => (
     <View style={styles.card}>
       <Text style={styles.cardTitle}>{item.title}</Text>
       <Text style={styles.cardDescription}>{item.description}</Text>
-      <View style={styles.badge}>
-         <Text style={styles.badgeText}>Learn More</Text>
-      </View>
+      {/* This button is clickable but has no action, as per assignment requirements. */}
+      <TouchableOpacity style={styles.badge} onPress={() => {}} activeOpacity={0.6}>
+        <Text style={styles.badgeText}>Learn More</Text>
+      </TouchableOpacity>
     </View>
   );
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
       <Text style={styles.header}>My Work</Text>
-      <FlatList
+      <FlatList<Project>
         data={projectData}
         keyExtractor={(item) => item.id}
         renderItem={renderProject}
         contentContainerStyle={styles.listContent}
       />
-    </View>
+    </SafeAreaView>
   );
 }
 
-const styles = StyleSheet.create({
+const getStyles = (colors: ColorPalette) => StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
-    paddingTop: 20,
+    backgroundColor: colors.background,
   },
   header: {
     fontSize: 28,
     fontWeight: 'bold',
     marginLeft: 20,
     marginBottom: 15,
+    marginTop: 10,
+    color: colors.text,
   },
   listContent: {
     paddingHorizontal: 20,
   },
   card: {
-    backgroundColor: '#f9f9f9',
+    backgroundColor: colors.card,
     padding: 20,
     borderRadius: 12,
     marginBottom: 15,
     borderWidth: 1,
-    borderColor: '#eee',
+    borderColor: colors.border,
     // Shadow for iOS
-    shadowColor: '#000',
+    shadowColor: colors.black,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
@@ -67,21 +93,22 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
     marginBottom: 5,
+    color: colors.text,
   },
   cardDescription: {
     fontSize: 14,
-    color: '#555',
+    color: colors.subtleText,
     marginBottom: 10,
   },
   badge: {
     alignSelf: 'flex-start',
-    backgroundColor: '#e3f2fd',
+    backgroundColor: colors.primary + '20', // primary color with low opacity
     paddingHorizontal: 10,
     paddingVertical: 5,
     borderRadius: 5,
   },
   badgeText: {
-    color: '#2196F3',
+    color: colors.primary,
     fontSize: 12,
     fontWeight: '600',
   },
